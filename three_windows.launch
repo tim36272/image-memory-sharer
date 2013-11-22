@@ -1,0 +1,30 @@
+<launch>
+  
+  <node pkg="image_memory_sharer" type="RosPublisher" name="RosPublisher1">
+    <remap from="image" to="/shared/image1" />
+  </node>
+  
+  <node pkg="image_memory_sharer" type="RosPublisher" name="RosPublisher2">
+    <remap from="image" to="/shared/image2" />
+  </node>
+  
+  <node pkg="image_memory_sharer" type="RosPublisher" name="RosPublisher3">
+    <remap from="image" to="/shared/image3" />
+  </node>
+  
+  <node pkg="image_view" type="image_view" name="raw_viewer">
+    <remap from="image" to="/camera/rgb/image_color" />
+  </node>
+  
+  <node pkg="image_view" type="image_view" name="copy_1">
+    <remap from="image" to="/shared/image1" />
+  </node>
+  
+  <node pkg="image_view" type="image_view" name="copy_2">
+    <remap from="image" to="/shared/image2" />
+  </node>
+  
+  <node pkg="image_view" type="image_view" name="copy_3">
+    <remap from="image" to="/shared/image3" />
+  </node>
+</launch>
