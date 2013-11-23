@@ -48,8 +48,7 @@ int main(int argc,char* argv[]) {
 }
 
 void Receiver::callback(const ros::TimerEvent& event) {
-	cv::Mat frame;
-	message_reader_.retrieve(&frame);
+	cv::Mat frame = message_reader_.retrieve();
 	out_stream_.publish(ConvertMatToMsg(frame));
 }
 

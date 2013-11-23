@@ -21,45 +21,11 @@
 #include <opencv2/opencv.hpp>
 class SharedMessageSaver {
 public:
-	SharedMessageSaver(const cv::Mat& frame) : memory_handle_(boost::interprocess::create_only,
-															  "image_transport",
-															  frame.cols*frame.rows*frame.channels())
-	{
-		rows = memory_handle_.construct<int>("rows")(frame.rows);
-		cols = memory_handle_.construct<int>("cols")(frame.cols);
-		channels = memory_handle_.construct<int>("channels")(frame.channels());
-		try {
-			data = memory_handle_.construct<uchar>("image")[frame.rows*frame.cols*frame.channels()]();
+	//needs to be initialized with a frame so the system knows how much memory to allocate
+	SharedMessageSaver(const cv::Mat& frame);
 
-		} catch (boost::interprocess::bad_alloc& e) {
-			std::cout<<"Couldn't allocate at full size, trying black and white"<<std::endl;
-			try {
-				data = memory_handle_.construct<uchar>("image")[frame.rows*frame.cols]();
-				*channels = 1;
-			} catch (boost::interprocess::bad_alloc& e) {
-				std::cout<<"Couldn't allocate enough space for the image, you must not have much RAM. Aborting."<<std::endl;
-				assert(false);
-			}
-		}
-		std::cout<<"Memory allocation successful"<<std::endl;
-	}
-
-	void store(const cv::Mat& frame) {
-		//we need to check if the frames are being broadcast in color or grayscale
-		cv::Mat temp_frame;
-		if(*channels == 1) cv::cvtColor(frame,temp_frame,CV_BGR2GRAY,1);
-		else temp_frame = frame;
-
-		//now copy the image to shared memory
-		uchar* ros_image_ptr = temp_frame.data;
-		uchar* memory_image_ptr = data;
-		for(int i=0;i<*rows * *cols;i++) {
-			*memory_image_ptr = *ros_image_ptr;
-			memory_image_ptr++;
-			ros_image_ptr++;
-		}
-
-	}
+	//input: the frame to be stored into shared memory
+	void store(const cv::Mat& frame);
 private:
 	boost::interprocess::managed_shared_memory memory_handle_;
 	uchar *data;

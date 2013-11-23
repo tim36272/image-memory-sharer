@@ -22,32 +22,11 @@
 #include <opencv2/opencv.hpp>
 class SharedMessageReader {
 public:
-	SharedMessageReader() : memory_handle_(boost::interprocess::open_only,"image_transport")
-	{
-		data = memory_handle_.find<uchar>("image");
-		rows = memory_handle_.find<int>("rows");
-		cols = memory_handle_.find<int>("cols");
-		channels = memory_handle_.find<int>("channels");
-		assert(data.first!=0);
-		assert(rows.first!=0);
-		assert(cols.first!=0);
-		assert(channels.first!=0);
+	SharedMessageReader();
 
-	}
-
-	void retrieve(cv::Mat* frame) {
-		frame->create(*(rows.first),*(cols.first),CV_8UC1);
-
-		//these pointers will iterate through the entire image
-		uchar* ros_image_ptr = frame->data;
-		uchar* memory_image_ptr = data.first;
-
-		for(int i=0;i<*rows.first * *cols.first * *channels.first;i++) {
-			*ros_image_ptr = *memory_image_ptr;
-			memory_image_ptr++;
-			ros_image_ptr++;
-		}
-	}
+	//output: a cv::Mat with the shared memory data
+	//this is a shallow copy since Mat's have to be forced to deep copy
+	cv::Mat retrieve();
 private:
 	boost::interprocess::managed_shared_memory memory_handle_;
 	std::pair<uchar*,unsigned long int> data;

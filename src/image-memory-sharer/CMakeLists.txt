@@ -72,8 +72,8 @@ catkin_package(
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
-#set(catkin_INCLUDE_DIRS "include/" ${catkin_INCLUDE_DIRS})
-include_directories(include/image-memory-sharer
+set(catkin_INCLUDE_DIRS "include/image-memory-sharer " ${catkin_INCLUDE_DIRS})
+include_directories(include
   ${catkin_INCLUDE_DIRS}
 )
 
@@ -136,9 +136,13 @@ include_directories(include/image-memory-sharer
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
 
-#add_library(ImageFetcher src/ImageFetcher.cpp)
-#target_link_libraries(ImageFetcher ${catkin_LIBRARIES})
-#link_libraries(ImageFetcher)
+add_library(SharedMessageReader src/SharedMessageReader.cpp)
+target_link_libraries(SharedMessageReader ${catkin_LIBRARIES})
+link_libraries(SharedMessageReader)
+
+add_library(SharedMessageSaver src/SharedMessageSaver.cpp)
+target_link_libraries(SharedMessageSaver ${catkin_LIBRARIES})
+link_libraries(SharedMessageSaver)
 
 
 ## Add gtest based cpp test target and link libraries
